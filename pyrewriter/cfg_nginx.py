@@ -10,17 +10,17 @@ from pyparsing import *
 import pyrewriter
 
 
-CMD = Word( alphas, alphanums + '_' )
+COMMENT = pythonStyleComment
 STR = sglQuotedString | dblQuotedString
+CMD = Word( alphas, alphanums + '_' )
 ARG_CHARS = filter( lambda s : s not in [ ';', '{', '}' ], printables )
 ARG = Word( ARG_CHARS ) | STR
 EXPR = Forward()
-TERM = Literal( ';' )
-COMMENT = pythonStyleComment
+TERM = Literal( ';' ) + Optional( COMMENT )
 BLOCK_BEGIN = Literal( '{' ) + ZeroOrMore( COMMENT )
 BLOCK_END = Literal( '}' ) + ZeroOrMore( COMMENT )
 BLOCK = BLOCK_BEGIN + ZeroOrMore( EXPR | COMMENT ) + BLOCK_END
-EXPR << CMD + ZeroOrMore( ARG | STR ) + (BLOCK | COMMENT | TERM)
+EXPR << CMD + ZeroOrMore( ARG | STR ) + (BLOCK | TERM )
 GRAMMAR = OneOrMore( EXPR | COMMENT )
 
 pyrewriter.capture( CMD )
