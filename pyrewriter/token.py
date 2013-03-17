@@ -9,10 +9,10 @@
 class Token( object ) :
 
 
-  def __init__( self, s_name ) :
+  def __init__( self, s_name, s_txt = None ) :
     self.__sName = s_name
     self.__lContent = []
-    self.__sTxt = ""
+    self.__sTxt = None
 
 
   @property
