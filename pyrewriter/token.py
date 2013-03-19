@@ -44,8 +44,11 @@ class Token( object ) :
       sTxt = None
       if 2 == len( args ) :
         uArg = args[ 1 ]
-        assert isinstance( uArg, basestring )
-        sTxt = uArg
+        assert isinstance( uArg, (basestring, int, long, float) )
+        if isinstance( uArg, basestring ) :
+          sTxt = uArg
+        else :
+          sTxt = str( uArg )
       oToken = Token( sName, sTxt )
     self.__lContent.append( oToken )
     return oToken

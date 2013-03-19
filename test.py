@@ -5,14 +5,14 @@
 # Copyright 2013 Grigory Petrov
 # See LICENSE for details.
 
-from pyrewriter import cfg_nginx, Token, parseTxt
+import pyrewriter
 
-oToken = parseTxt( cfg_nginx.GRAMMAR, """
+oToken = pyrewriter.parseTxt( pyrewriter.GRAMMAR_NGINX, """
   foo "1";
   bar ab; # comment
 """ )
-oToken = Token( 'EXPR' )
-oToken.addChild( Token( 'CMD', 'bar' ) )
-oToken.addChild( Token( 'ARG', '42' ) )
-oToken.addChild( 'TERM', ';' )
+oSubToken = oToken.addChild( 'EXPR' )
+oSubToken.addChild( 'CMD', 'bar' )
+oSubToken.addChild( 'ARG', 42 )
+oSubToken.addChild( 'TERM', ';' )
 

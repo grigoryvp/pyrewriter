@@ -37,3 +37,8 @@ def parseTxt( o_grammar, s_txt ) :
     oToken.addChild( oSubtoken )
   return oToken
 
+
+##* Better delay load and give only grammar that is required.
+##! After defining |capture|.
+from cfg_nginx import GRAMMAR as GRAMMAR_NGINX
+
