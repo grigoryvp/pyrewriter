@@ -14,5 +14,5 @@ oToken = parseTxt( cfg_nginx.GRAMMAR, """
 oToken = Token( 'EXPR' )
 oToken.addChild( Token( 'CMD', 'bar' ) )
 oToken.addChild( Token( 'ARG', '42' ) )
-oToken.addChild( Token( 'TERM', ';' ) )
+oToken.addChild( 'TERM', ';' )
 

@@ -31,8 +31,24 @@ class Token( object ) :
     self.__sTxt = s_txt
 
 
-  def addChild( self, o_token ) :
-    self.__lContent.append( o_token )
+  def addChild( self, * args ) :
+    assert args
+    uArg = args[ 0 ]
+    if isinstance( uArg, Token ) :
+      assert 1 == len( args )
+      oToken = uArg
+    else :
+      assert isinstance( uArg, basestring )
+      assert len( args ) in [ 1, 2 ]
+      sName = uArg
+      sTxt = None
+      if 2 == len( args ) :
+        uArg = args[ 1 ]
+        assert isinstance( uArg, basestring )
+        sTxt = uArg
+      oToken = Token( sName, sTxt )
+    self.__lContent.append( oToken )
+    return oToken
 
 
   def printit( self, n_indent = 0 ) :
