@@ -5,9 +5,9 @@
 # Copyright 2013 Grigory Petrov
 # See LICENSE for details.
 
-from pyrewriter import cfg_nginx, Token
+from pyrewriter import cfg_nginx, Token, parseTxt
 
-lTokens = cfg_nginx.GRAMMAR.parseString( """
+oToken = parseTxt( cfg_nginx.GRAMMAR, """
   foo "1";
   bar ab; # comment
 """ )

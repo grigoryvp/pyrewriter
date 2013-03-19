@@ -9,7 +9,13 @@
 class Token( object ) :
 
 
-  def __init__( self, s_name, s_txt = None ) :
+  def __init__(
+    self,
+    ##i Token name, |None| for root token.
+    s_name = None,
+    ##i Text, associated with token, |None| for no text.
+    s_txt = None ) :
+
     self.__sName = s_name
     self.__lContent = []
     self.__sTxt = None

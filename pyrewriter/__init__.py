@@ -29,3 +29,11 @@ def capture( o_expr ) :
     return oToken
   o_expr.addParseAction( parseAction )
 
+
+def parseTxt( o_grammar, s_txt ) :
+  ##  Root token.
+  oToken = Token()
+  for oSubtoken in o_grammar.parseString( s_txt ) :
+    oToken.addChild( oSubtoken )
+  return oToken
+
