@@ -8,7 +8,7 @@
 import os
 import pkg_resources
 
-NAME_SHORT = "pyrewriting"
+NAME_SHORT = "pyrewriter"
 VER_MAJOR = 0
 VER_MINOR = 1
 try :
