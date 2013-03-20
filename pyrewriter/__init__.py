@@ -6,8 +6,26 @@
 # See LICENSE for details.
 
 import inspect
+import imp
+import sys
 
 from token import Token
+
+class Context( object ) :
+
+
+  __oInst = None
+
+
+  def __init__( self ) :
+    self.predefined = {}
+
+
+  @classmethod
+  def get( self ) :
+    if not self.__oInst :
+      self.__oInst = Context()
+    return self.__oInst
 
 
 def capture( o_expr ) :
@@ -30,15 +48,18 @@ def capture( o_expr ) :
   o_expr.addParseAction( parseAction )
 
 
+def predefined( s_name ) :
+  if s_name not in Context.get().predefined :
+    sFile = 'predefined_{0}.py'.format( s_name )
+    print( __file__ )
+    Context.get().predefined[ s_name ] = imp.load_source( '', sFile )
+  return Context.get().predefined[ s_name ].GRAMMAR
+
+
 def parseTxt( o_grammar, s_txt ) :
   ##  Root token.
   oToken = Token()
   for oSubtoken in o_grammar.parseString( s_txt ) :
     oToken.addChild( oSubtoken )
   return oToken
-
-
-##* Better delay load and give only grammar that is required.
-##! After defining |capture|.
-from cfg_nginx import GRAMMAR as GRAMMAR_NGINX
 
