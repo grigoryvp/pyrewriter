@@ -7,7 +7,7 @@
 
 import inspect
 import imp
-import sys
+import os
 
 from token import Token
 
@@ -50,9 +50,11 @@ def capture( o_expr ) :
 
 def predefined( s_name ) :
   if s_name not in Context.get().predefined :
-    sFile = 'predefined_{0}.py'.format( s_name )
-    print( __file__ )
-    Context.get().predefined[ s_name ] = imp.load_source( '', sFile )
+    sModule = 'predefined_{0}'.format( s_name )
+    sFile = '{0}.py'.format( sModule )
+    sDir = os.path.dirname( os.path.abspath( __file__ ) )
+    sPath = os.path.join( sDir, sFile )
+    Context.get().predefined[ s_name ] = imp.load_source( sModule, sPath )
   return Context.get().predefined[ s_name ].GRAMMAR
 
 
