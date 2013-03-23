@@ -23,12 +23,12 @@ BLOCK = BLOCK_BEGIN + ZeroOrMore( EXPR | COMMENT ) + BLOCK_END
 EXPR << CMD + ZeroOrMore( ARG | STR ) + (BLOCK | TERM )
 GRAMMAR = OneOrMore( EXPR | COMMENT )
 
-pyrewriter.capture( CMD )
-pyrewriter.capture( ARG )
-pyrewriter.capture( TERM )
+pyrewriter.capture( CMD, 'separate' )
+pyrewriter.capture( ARG, 'separate' )
+pyrewriter.capture( TERM, 'newline' )
 pyrewriter.capture( COMMENT )
-pyrewriter.capture( BLOCK_BEGIN )
-pyrewriter.capture( BLOCK_END )
+pyrewriter.capture( BLOCK_BEGIN, 'newline' )
+pyrewriter.capture( BLOCK_END, 'newline' )
 pyrewriter.capture( BLOCK )
 pyrewriter.capture( EXPR )
 

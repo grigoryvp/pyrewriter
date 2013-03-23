@@ -16,19 +16,13 @@ class Token( object ) :
     ##i Text, associated with token, |None| for no text.
     s_str = None ) :
 
-    self.__sName = s_name
     self.__lChildren = []
-    self.__sStr = s_str
-
-
-  @property
-  def str( self ) :
-    return self.__sStr
-
-
-  @str.setter
-  def str( self, s_str ) :
-    self.__sStr = s_str
+    self.__sName = s_name
+    self.str = s_str
+    ##  Contains options passed as strings into |capture|.
+    self.options = {}
+    ##  Contains reference to grammar that produced this token.
+    self.grammar = None
 
 
   @property
@@ -73,20 +67,31 @@ class Token( object ) :
 
   def toStr( self, s_indent = '  ' ) :
 
-    def recursive( o_token, n_indent ) :
+    class Context( object ) : pass
+
+    def recursive( o_token, n_indent, o_context ) :
+      print( o_token.name, o_token.options )
       sOut = ""
       ##  Root container token?
       if None == o_token.name :
         nIndent = n_indent
       else :
-        nIndent = n_indent + 1
         if o_token.str :
+          if 'separate' in o_token.options and o_context.lastToken :
+            if 'separate' in o_context.lastToken.options :
+              sOut += ' '
           sOut += o_token.str
+          oContext.lastToken = self
+        if 'newline' in o_token.options :
+          sOut += '\n'
+        nIndent = n_indent + 1
       for oChild in o_token.children :
-        sStr = recursive( oChild, nIndent )
+        sStr = recursive( oChild, nIndent, o_context )
         if sStr :
           sOut += sStr
       return sOut
 
-    return recursive( self, 0 )
+    oContext = Context()
+    oContext.lastToken = None
+    return recursive( self, 0, oContext )
 

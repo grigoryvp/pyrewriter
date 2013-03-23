@@ -11,6 +11,11 @@ import os
 
 from token import Token
 
+
+##  List of valid token options that can be passed to |capture|.
+ABOUT_OPTIONS = [ 'newline', 'separate' ]
+
+
 class Context( object ) :
 
 
@@ -28,7 +33,7 @@ class Context( object ) :
     return self.__oInst
 
 
-def capture( o_expr ) :
+def capture( o_expr, * args ) :
   mLocals = inspect.currentframe().f_back.f_locals
   for sId in mLocals :
     if id( mLocals[ sId ] ) == id( o_expr ) :
@@ -44,6 +49,9 @@ def capture( o_expr ) :
     assert len( lTxt ) < 2
     if lTxt :
       oToken.str = lTxt[ 0 ]
+    for sOption in args :
+      assert sOption in ABOUT_OPTIONS
+      oToken.options[ sOption ] = True
     return oToken
   o_expr.addParseAction( parseAction )
 
@@ -58,10 +66,20 @@ def predefined( s_name ) :
   return Context.get().predefined[ s_name ].GRAMMAR
 
 
+##x Evaluates to root unnamed token that contains top-level tokens produced
+##  by applying grammar to text.
+##! Must be used instead of calling |grammar.parseString| since it also
+##  adds reference to grammar into tokens that is required for some
+##  mechanics to work.
 def parseTxt( o_grammar, s_txt ) :
   ##  Root token.
   oToken = Token()
   for oSubtoken in o_grammar.parseString( s_txt ) :
     oToken.addChild( oSubtoken )
+  def recursiveSetGrammar( o_token ) :
+    o_token.grammar = o_grammar
+    for oChild in o_token.children :
+      recursiveSetGrammar( oChild )
+  recursiveSetGrammar( oToken )
   return oToken
 
