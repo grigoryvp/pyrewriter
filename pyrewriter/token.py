@@ -14,21 +14,26 @@ class Token( object ) :
     ##i Token name, |None| for root token.
     s_name = None,
     ##i Text, associated with token, |None| for no text.
-    s_txt = None ) :
+    s_str = None ) :
 
     self.__sName = s_name
-    self.__lContent = []
-    self.__sTxt = None
+    self.__lChildren = []
+    self.__sStr = s_str
 
 
   @property
-  def txt( self ) :
-    return self.__sTxt
+  def str( self ) :
+    return self.__sStr
 
 
-  @txt.setter
-  def txt( self, s_txt ) :
-    self.__sTxt = s_txt
+  @str.setter
+  def str( self, s_str ) :
+    self.__sStr = s_str
+
+
+  @property
+  def name( self ) :
+    return self.__sName
 
 
   def addChild( self, * args ) :
@@ -41,22 +46,47 @@ class Token( object ) :
       assert isinstance( uArg, basestring )
       assert len( args ) in [ 1, 2 ]
       sName = uArg
-      sTxt = None
+      sStr = None
       if 2 == len( args ) :
         uArg = args[ 1 ]
         assert isinstance( uArg, (basestring, int, long, float) )
         if isinstance( uArg, basestring ) :
-          sTxt = uArg
+          sStr = uArg
         else :
-          sTxt = str( uArg )
-      oToken = Token( sName, sTxt )
-    self.__lContent.append( oToken )
+          sStr = str( uArg )
+      oToken = Token( sName, sStr )
+    self.__lChildren.append( oToken )
     return oToken
+
+
+  @property
+  def children( self ) :
+    return self.__lChildren
 
 
   def printit( self, n_indent = 0 ) :
     sIndent = ' ' * 2 * n_indent
-    print( '{0}{1}({2})'.format( sIndent, self.__sName, self.__sTxt ) )
-    for oItem in self.__lContent :
+    print( '{0}{1}({2})'.format( sIndent, self.name, self.str ) )
+    for oItem in self.__lChildren :
       oItem.printit( n_indent + 1 )
+
+
+  def toStr( self, s_indent = '  ' ) :
+
+    def recursive( o_token, n_indent ) :
+      sOut = ""
+      ##  Root container token?
+      if None == o_token.name :
+        nIndent = n_indent
+      else :
+        nIndent = n_indent + 1
+        if o_token.str :
+          sOut += o_token.str
+      for oChild in o_token.children :
+        sStr = recursive( oChild, nIndent )
+        if sStr :
+          sOut += sStr
+      return sOut
+
+    return recursive( self, 0 )
 

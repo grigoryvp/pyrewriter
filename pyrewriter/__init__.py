@@ -43,7 +43,7 @@ def capture( o_expr ) :
     lTxt = [ o for o in o_token if isinstance( o, basestring ) ]
     assert len( lTxt ) < 2
     if lTxt :
-      oToken.txt = lTxt[ 0 ]
+      oToken.str = lTxt[ 0 ]
     return oToken
   o_expr.addParseAction( parseAction )
 
