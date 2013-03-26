@@ -10,6 +10,8 @@ import imp
 import os
 
 from token import Token
+import info
+import grammar
 
 
 ##  List of valid token options that can be passed to |capture|.
@@ -34,13 +36,20 @@ class Context( object ) :
 
 
 def capture( o_expr, * args ) :
+
   mLocals = inspect.currentframe().f_back.f_locals
   for sId in mLocals :
     if id( mLocals[ sId ] ) == id( o_expr ) :
       sName = sId
       break
   else :
-    assert False, "Object without name passed to Capture()"
+    assert False, "Object without identifier passed to Capture()"
+
+  mOptions = {}
+  for sOption in args :
+    assert sOption in ABOUT_OPTIONS
+    mOptions[ sOption ] = True
+
   def parseAction( s_txt, n_pos, o_token ) :
     oToken = Token( sName )
     for oChild in [ o for o in o_token if isinstance( o, Token ) ] :
@@ -49,11 +58,14 @@ def capture( o_expr, * args ) :
     assert len( lTxt ) < 2
     if lTxt :
       oToken.str = lTxt[ 0 ]
-    for sOption in args :
-      assert sOption in ABOUT_OPTIONS
-      oToken.options[ sOption ] = True
+      oToken.options.update( mOptions )
     return oToken
   o_expr.addParseAction( parseAction )
+
+  if not hasattr( o_expr, info.CTX_NAME ) :
+    setattr( o_expr, info.CTX_NAME, { 'options': mOptions } )
+  else :
+    assert False, "Single object captured more than once"
 
 
 def predefined( s_name ) :
@@ -74,10 +86,13 @@ def predefined( s_name ) :
 def parseTxt( o_grammar, s_txt ) :
   ##  Root token.
   oToken = Token()
+  ##  Grammar definition.
+  oGrammar = grammar.Grammar()
+  oGrammar.root = o_grammar
   for oSubtoken in o_grammar.parseString( s_txt ) :
     oToken.addChild( oSubtoken )
   def recursiveSetGrammar( o_token ) :
-    o_token.grammar = o_grammar
+    o_token.grammar = oGrammar
     for oChild in o_token.children :
       recursiveSetGrammar( oChild )
   recursiveSetGrammar( oToken )

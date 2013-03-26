@@ -27,3 +27,7 @@ can be modified and written back as text. Used to modify config files.
   s_name_short = NAME_SHORT,
   s_ver_txt = VER_TXT )
 
+##  Name of context object that is added to |pyparsing| grammar objects
+##  by |capture|.
+CTX_NAME = 'pyrewriter_ctx'
+

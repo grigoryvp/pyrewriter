@@ -5,6 +5,8 @@
 # Copyright 2013 Grigory Petrov
 # See LICENSE for details.
 
+import info
+
 
 class Token( object ) :
 
@@ -21,7 +23,9 @@ class Token( object ) :
     self.str = s_str
     ##  Contains options passed as strings into |capture|.
     self.options = {}
-    ##  Contains reference to grammar that produced this token.
+    ##  Contains reference to |Grammar| instance that has reference to
+    ##  grammar used to produce this token and options associated with
+    ##  grammar's expressions via |pyrewriter.capture|.
     self.grammar = None
 
 
@@ -49,6 +53,7 @@ class Token( object ) :
         else :
           sStr = str( uArg )
       oToken = Token( sName, sStr )
+      oToken.grammar = self.grammar
     self.__lChildren.append( oToken )
     return oToken
 
@@ -70,7 +75,6 @@ class Token( object ) :
     class Context( object ) : pass
 
     def recursive( o_token, n_indent, o_context ) :
-      print( o_token.name, o_token.options )
       sOut = ""
       ##  Root container token?
       if None == o_token.name :
