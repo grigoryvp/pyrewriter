@@ -8,10 +8,17 @@
 import pyrewriter
 
 oToken = pyrewriter.parseTxt( pyrewriter.predefined( 'nginx' ), """
-  foo {
-    bar;
-    baz;
-  }
+        server
+
+        {
+                listen
+                # some port
+                80 # some comment
+                # some flag
+                default_server
+                # token end
+                ; location / { uwsgi_pass unix:/tmp/www_test.sock; }
+        }
 """ )
 oSubToken = oToken.addChild( 'EXPR' )
 oSubToken.addChild( 'CMD', 'bar' )
