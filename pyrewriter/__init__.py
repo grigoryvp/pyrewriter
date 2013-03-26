@@ -63,7 +63,7 @@ def capture( o_expr, * args ) :
   o_expr.addParseAction( parseAction )
 
   if not hasattr( o_expr, info.CTX_NAME ) :
-    setattr( o_expr, info.CTX_NAME, { 'options': mOptions } )
+    setattr( o_expr, info.CTX_NAME, { 'name' : sName, 'options': mOptions } )
   else :
     assert False, "Single object captured more than once"
 
@@ -87,8 +87,9 @@ def parseTxt( o_grammar, s_txt ) :
   ##  Root token.
   oToken = Token()
   ##  Grammar definition.
-  oGrammar = grammar.Grammar()
-  oGrammar.root = o_grammar
+  oGrammar = grammar.Grammar( o_grammar )
+  ##  Build expression-name-to-options dictionary.
+  oGrammar.analyse()
   for oSubtoken in o_grammar.parseString( s_txt ) :
     oToken.addChild( oSubtoken )
   def recursiveSetGrammar( o_token ) :

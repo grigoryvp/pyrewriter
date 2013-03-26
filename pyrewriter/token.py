@@ -54,6 +54,9 @@ class Token( object ) :
           sStr = str( uArg )
       oToken = Token( sName, sStr )
       oToken.grammar = self.grammar
+      ##! Get options from grammar definition, if any.
+      if sName in oToken.grammar.options :
+        oToken.options = oToken.grammar.options[ sName ]
     self.__lChildren.append( oToken )
     return oToken
 
@@ -85,7 +88,7 @@ class Token( object ) :
             if 'separate' in o_context.lastToken.options :
               sOut += ' '
           sOut += o_token.str
-          oContext.lastToken = self
+          oContext.lastToken = o_token
         if 'newline' in o_token.options :
           sOut += '\n'
         nIndent = n_indent + 1
