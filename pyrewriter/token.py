@@ -77,29 +77,34 @@ class Token( object ) :
 
     class Context( object ) : pass
 
-    def recursive( o_token, n_indent, o_context ) :
-      ##  Root container token?
-      if None == o_token.name :
-        nIndent = n_indent
-      else :
-        if o_token.str :
+    def recursive( o_token, o_context ) :
+      ##! Token like '}' unidents itself.
+      if 'unindent' in o_token.options :
+        assert o_context.indent > 0, "Mismatched umber of { and }"
+        o_context.indent -= 1
+      if o_token.str :
+        ##  Not a first token on the line?
+        if o_context.out and not o_context.out.endswith( '\n' ) :
           if o_context.lastToken :
             if 'separate' in o_token.options :
               if 'separate' in o_context.lastToken.options :
-                ##  Not a first token on the line?
-                if o_context.out and not o_context.out.endswith( '\n' ) :
                   o_context.out += ' '
-          o_context.out += o_token.str
-          oContext.lastToken = o_token
-        if 'newline' in o_token.options :
-          o_context.out += '\n'
-        nIndent = n_indent + 1
+        ##  First token in the line?
+        else :
+          o_context.out += o_context.indent * s_indent
+        o_context.out += o_token.str
+        oContext.lastToken = o_token
+      if 'newline' in o_token.options :
+        o_context.out += '\n'
+      if 'indent' in o_token.options :
+        o_context.indent += 1
       for oChild in o_token.children :
-        recursive( oChild, nIndent, o_context )
+        recursive( oChild, o_context )
 
     oContext = Context()
     oContext.lastToken = None
+    oContext.indent = 0
     oContext.out = ""
-    recursive( self, 0, oContext )
+    recursive( self, oContext )
     return oContext.out
 

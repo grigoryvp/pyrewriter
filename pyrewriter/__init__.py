@@ -15,7 +15,18 @@ import grammar
 
 
 ##  List of valid token options that can be passed to |capture|.
-ABOUT_OPTIONS = [ 'newline', 'separate' ]
+ABOUT_OPTIONS = [
+  ##  Newline is added after this token, like ';' or '{'.
+  'newline',
+  ##  Two jointed tokens both haveing this option are separated with space,
+  ##  like command and it's arguments.
+  'separate',
+  ##  This token increase indentation for following tokens, like '{'.
+  'indent',
+  ##  This token decrease indentation for itself and following tokens,
+  ##  like '}'.
+  'unindent',
+]
 
 
 class Context( object ) :
