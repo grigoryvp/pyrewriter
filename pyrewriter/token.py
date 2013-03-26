@@ -78,27 +78,28 @@ class Token( object ) :
     class Context( object ) : pass
 
     def recursive( o_token, n_indent, o_context ) :
-      sOut = ""
       ##  Root container token?
       if None == o_token.name :
         nIndent = n_indent
       else :
         if o_token.str :
-          if 'separate' in o_token.options and o_context.lastToken :
-            if 'separate' in o_context.lastToken.options :
-              sOut += ' '
-          sOut += o_token.str
+          if o_context.lastToken :
+            if 'separate' in o_token.options :
+              if 'separate' in o_context.lastToken.options :
+                ##  Not a first token on the line?
+                if o_context.out and not o_context.out.endswith( '\n' ) :
+                  o_context.out += ' '
+          o_context.out += o_token.str
           oContext.lastToken = o_token
         if 'newline' in o_token.options :
-          sOut += '\n'
+          o_context.out += '\n'
         nIndent = n_indent + 1
       for oChild in o_token.children :
-        sStr = recursive( oChild, nIndent, o_context )
-        if sStr :
-          sOut += sStr
-      return sOut
+        recursive( oChild, nIndent, o_context )
 
     oContext = Context()
     oContext.lastToken = None
-    return recursive( self, 0, oContext )
+    oContext.out = ""
+    recursive( self, 0, oContext )
+    return oContext.out
 
