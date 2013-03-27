@@ -7,7 +7,7 @@
 
 import pyrewriter
 
-oToken = pyrewriter.parseTxt( pyrewriter.predefined( 'nginx' ), """
+oToken = pyrewriter.parseStr( pyrewriter.predefined( 'nginx' ), """
         server
 
         {
@@ -24,12 +24,18 @@ oSubToken = oToken.addChild( 'EXPR' )
 oSubToken.addChild( 'CMD', 'bar' )
 oSubToken.addChild( 'ARG', 42 )
 oSubToken.addChild( 'TERM', ';' )
-oToken.addChild( pyrewriter.parseTxt( pyrewriter.predefined( 'nginx' ), """
+oToken.addChild( pyrewriter.parseStr( pyrewriter.predefined( 'nginx' ), """
   foo {
     bar "#";
     baz 2;
   }
 """ ).children[ 0 ] )
+oToken.addChildFromStr( """
+  foo {
+    bar "#";
+    baz 2;
+  }
+""" )
 
 print( oToken.toStr() )
 

@@ -6,6 +6,8 @@
 # See LICENSE for details.
 
 import info
+import parse
+import predefined
 
 
 class Token( object ) :
@@ -32,6 +34,11 @@ class Token( object ) :
   @property
   def name( self ) :
     return self.__sName
+
+
+  @property
+  def children( self ) :
+    return self.__lChildren
 
 
   def addChild( self, * args ) :
@@ -61,10 +68,10 @@ class Token( object ) :
     return oToken
 
 
-  @property
-  def children( self ) :
-    return self.__lChildren
-
+  def addChildFromStr( self, s_child ) :
+    oRoot = parse.parseStr( self.grammar.root, s_child )
+    for oToken in oRoot.children :
+      self.addChild( oToken )
 
   def printit( self, n_indent = 0 ) :
     sIndent = ' ' * 2 * n_indent

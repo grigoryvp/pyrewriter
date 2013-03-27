@@ -6,12 +6,11 @@
 # See LICENSE for details.
 
 import inspect
-import imp
-import os
 
 from token import Token
+from parse import parseStr
+from predefined import predefined
 import info
-import grammar
 
 
 ##  List of valid token options that can be passed to |capture|.
@@ -27,23 +26,6 @@ ABOUT_OPTIONS = [
   ##  like '}'.
   'unindent',
 ]
-
-
-class Context( object ) :
-
-
-  __oInst = None
-
-
-  def __init__( self ) :
-    self.predefined = {}
-
-
-  @classmethod
-  def get( self ) :
-    if not self.__oInst :
-      self.__oInst = Context()
-    return self.__oInst
 
 
 def capture( o_expr, * args ) :
@@ -77,36 +59,4 @@ def capture( o_expr, * args ) :
     setattr( o_expr, info.CTX_NAME, { 'name' : sName, 'options': mOptions } )
   else :
     assert False, "Single object captured more than once"
-
-
-def predefined( s_name ) :
-  if s_name not in Context.get().predefined :
-    sModule = 'predefined_{0}'.format( s_name )
-    sFile = '{0}.py'.format( sModule )
-    sDir = os.path.dirname( os.path.abspath( __file__ ) )
-    sPath = os.path.join( sDir, sFile )
-    Context.get().predefined[ s_name ] = imp.load_source( sModule, sPath )
-  return Context.get().predefined[ s_name ].GRAMMAR
-
-
-##x Evaluates to root unnamed token that contains top-level tokens produced
-##  by applying grammar to text.
-##! Must be used instead of calling |grammar.parseString| since it also
-##  adds reference to grammar into tokens that is required for some
-##  mechanics to work.
-def parseTxt( o_grammar, s_txt ) :
-  ##  Root token.
-  oToken = Token()
-  ##  Grammar definition.
-  oGrammar = grammar.Grammar( o_grammar )
-  ##  Build expression-name-to-options dictionary.
-  oGrammar.analyse()
-  for oSubtoken in o_grammar.parseString( s_txt ) :
-    oToken.addChild( oSubtoken )
-  def recursiveSetGrammar( o_token ) :
-    o_token.grammar = oGrammar
-    for oChild in o_token.children :
-      recursiveSetGrammar( oChild )
-  recursiveSetGrammar( oToken )
-  return oToken
 
