@@ -12,11 +12,11 @@ import pyrewriter
 
 COMMENT = pythonStyleComment
 STR = sglQuotedString | dblQuotedString
-CMD = Word( alphas, alphanums + '_' )
-ARG_CHARS = filter( lambda s : s not in [ ';', '{', '}' ], printables )
-ARG = Word( ARG_CHARS ) | STR
+CMD = Word( alphas, alphanums + '_' ) + ZeroOrMore( COMMENT )
+ARG_CHARS = filter( lambda s : s not in [ ';', '{', '}', '#' ], printables )
+ARG = (Word( ARG_CHARS ) | STR) + ZeroOrMore( COMMENT )
+TERM = Literal( ';' ) + ZeroOrMore( COMMENT )
 EXPR = Forward()
-TERM = Literal( ';' ) + Optional( COMMENT )
 BLOCK_BEGIN = Literal( '{' ) + ZeroOrMore( COMMENT )
 BLOCK_END = Literal( '}' ) + ZeroOrMore( COMMENT )
 BLOCK = BLOCK_BEGIN + ZeroOrMore( EXPR | COMMENT ) + BLOCK_END
@@ -26,7 +26,7 @@ GRAMMAR = OneOrMore( EXPR | COMMENT )
 pyrewriter.capture( CMD, 'separate' )
 pyrewriter.capture( ARG, 'separate' )
 pyrewriter.capture( TERM, 'newline' )
-pyrewriter.capture( COMMENT )
+pyrewriter.capture( COMMENT, 'newline', 'separate' )
 pyrewriter.capture( BLOCK_BEGIN, 'newline', 'separate', 'indent' )
 pyrewriter.capture( BLOCK_END, 'newline', 'unindent' )
 pyrewriter.capture( BLOCK )
