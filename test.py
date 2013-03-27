@@ -24,6 +24,12 @@ oSubToken = oToken.addChild( 'EXPR' )
 oSubToken.addChild( 'CMD', 'bar' )
 oSubToken.addChild( 'ARG', 42 )
 oSubToken.addChild( 'TERM', ';' )
+oToken.addChild( pyrewriter.parseTxt( pyrewriter.predefined( 'nginx' ), """
+  foo {
+    bar "#";
+    baz 2;
+  }
+""" ).children[ 0 ] )
 
 print( oToken.toStr() )
 
