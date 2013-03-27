@@ -50,7 +50,7 @@ def capture( o_expr, * args ) :
     lTxt = [ o for o in o_token if isinstance( o, basestring ) ]
     assert len( lTxt ) < 2
     if lTxt :
-      oToken.str = lTxt[ 0 ]
+      oToken.val = lTxt[ 0 ]
       oToken.options.update( mOptions )
     return oToken
   o_expr.addParseAction( parseAction )

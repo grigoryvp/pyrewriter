@@ -37,5 +37,9 @@ oToken.addChildFromStr( """
   }
 """ )
 
+for oItem in oToken.findChild( 'CMD', 'foo' ) :
+  pass
+  # oBlock = oItem.findSibling( 'BLOCK' )[ 0 ]
+
 print( oToken.toStr() )
 
