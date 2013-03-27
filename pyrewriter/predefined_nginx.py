@@ -13,7 +13,8 @@ import pyrewriter
 COMMENT = pythonStyleComment
 STR = sglQuotedString | dblQuotedString
 CMD = Word( alphas, alphanums + '_' ) + ZeroOrMore( COMMENT )
-ARG_CHARS = filter( lambda s : s not in [ ';', '{', '}', '#' ], printables )
+ARG_NOCHARS = [ ';', '{', '}', '#', '"', '\'' ]
+ARG_CHARS = filter( lambda s : s not in ARG_NOCHARS, printables )
 ARG = (Word( ARG_CHARS ) | STR) + ZeroOrMore( COMMENT )
 TERM = Literal( ';' ) + ZeroOrMore( COMMENT )
 EXPR = Forward()
