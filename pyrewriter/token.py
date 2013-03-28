@@ -29,6 +29,8 @@ class Token( object ) :
     ##  grammar used to produce this token and options associated with
     ##  grammar's expressions via |pyrewriter.capture|.
     self.grammar = None
+    ##  Reference to parent token, None if this is root token.
+    self.parent = None
 
 
   @property
@@ -65,6 +67,7 @@ class Token( object ) :
       if sName in oToken.grammar.options :
         oToken.options = oToken.grammar.options[ sName ]
     self.__lChildren.append( oToken )
+    oToken.parent = self
     return oToken
 
 
@@ -116,17 +119,24 @@ class Token( object ) :
     return oContext.out
 
 
-  def findChild( self, s_name, s_val = None ) :
+  def findChild( self, s_name, s_val = None, f_recursive = True ) :
 
     lFound = []
 
     def recursive( o_token, l_found ) :
       if s_name == o_token.name and (not s_val or s_val == o_token.val) :
         l_found.append( o_token )
-      for oToken in o_token.children :
-        recursive( oToken, l_found )
+      if f_recursive :
+        for oToken in o_token.children :
+          recursive( oToken, l_found )
 
     for oToken in self.children :
       recursive( oToken, lFound )
     return lFound
+
+
+  def findSibling( self, s_name, s_val = None ) :
+    if self.parent :
+      return self.parent.findChild( s_name, s_val, f_recursive = False )
+    return []
 

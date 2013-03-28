@@ -37,9 +37,11 @@ oToken.addChildFromStr( """
   }
 """ )
 
+##  Simple modification.
 for oItem in oToken.findChild( 'CMD', 'foo' ) :
-  pass
-  # oBlock = oItem.findSibling( 'BLOCK' )[ 0 ]
+  oBlock = oItem.findSibling( 'BLOCK' )[ 0 ]
+  oVal = oBlock.findChild( 'CMD', 'baz' )[ 0 ].findSibling( 'ARG' )[ 0 ]
+  oVal.val = '3'
 
 print( oToken.toStr() )
 
