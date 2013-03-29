@@ -10,6 +10,17 @@ import parse
 import predefined
 
 
+class ListEx( list ) :
+
+
+  def first( self ) :
+    return self[ 0 ]
+
+
+  def last( self ) :
+    return self[ -1 ]
+
+
 class Token( object ) :
 
 
@@ -31,6 +42,8 @@ class Token( object ) :
     self.grammar = None
     ##  Reference to parent token, None if this is root token.
     self.parent = None
+    ##  Reference to result of last |find...| command.
+    self.found = ListEx()
 
 
   @property
@@ -72,7 +85,7 @@ class Token( object ) :
 
 
   def addChildFromStr( self, s_child ) :
-    oRoot = parse.parseStr( self.grammar.root, s_child )
+    oRoot = parse.parse( self.grammar.root, s_child )
     for oToken in oRoot.children :
       self.addChild( oToken )
 
@@ -132,11 +145,12 @@ class Token( object ) :
 
     for oToken in self.children :
       recursive( oToken, lFound )
-    return lFound
+    self.found = ListEx( lFound )
+    return self.found
 
 
   def findSibling( self, s_name, s_val = None ) :
     if self.parent :
       return self.parent.findChild( s_name, s_val, f_recursive = False )
-    return []
+    return ListEx()
 

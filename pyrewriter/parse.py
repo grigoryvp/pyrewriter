@@ -14,7 +14,7 @@ import token
 ##! Must be used instead of calling |grammar.parseString| since it also
 ##  adds reference to grammar into tokens that is required for some
 ##  mechanics to work.
-def parseStr( o_grammar, s_txt ) :
+def parse( o_grammar, s_txt ) :
 
   ##  Root token.
   oToken = token.Token()

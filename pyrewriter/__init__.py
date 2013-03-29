@@ -8,7 +8,7 @@
 import inspect
 
 from token import Token
-from parse import parseStr
+from parse import parse
 from predefined import predefined
 import info
 
