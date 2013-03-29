@@ -26,7 +26,7 @@ def parse( o_grammar, s_txt ) :
     oToken.addChild( oSubtoken )
   def recursiveSetGrammar( o_token ) :
     o_token.grammar = oGrammar
-    for oChild in o_token.children :
+    for oChild in o_token.children() :
       recursiveSetGrammar( oChild )
   recursiveSetGrammar( oToken )
   return oToken

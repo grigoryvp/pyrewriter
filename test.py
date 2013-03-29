@@ -29,7 +29,7 @@ oToken.addChild( pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
     bar "#";
     baz 2;
   }
-""" ).children[ 0 ] )
+""" ).children().first() )
 oToken.addChildFromStr( """
   foo {
     bar "#";
@@ -38,9 +38,9 @@ oToken.addChildFromStr( """
 """ )
 
 ##  Simple modification.
-for oItem in oToken.findChild( 'CMD', 'foo' ) :
-  oBlock = oItem.findSibling( 'BLOCK' )[ 0 ]
-  oVal = oBlock.findChild( 'CMD', 'baz' )[ 0 ].findSibling( 'ARG' )[ 0 ]
+for oItem in oToken.descendants( 'CMD', 'foo' ) :
+  oBlock = oItem.siblings( 'BLOCK' ).first()
+  oVal = oBlock.descendants( 'CMD', 'baz' ).first().siblings( 'ARG' ).first()
   oVal.val = '3'
 
 print( oToken.toStr() )

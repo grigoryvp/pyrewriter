@@ -51,11 +51,6 @@ class Token( object ) :
     return self.__sName
 
 
-  @property
-  def children( self ) :
-    return self.__lChildren
-
-
   def addChild( self, * args ) :
     assert args
     uArg = args[ 0 ]
@@ -86,7 +81,7 @@ class Token( object ) :
 
   def addChildFromStr( self, s_child ) :
     oRoot = parse.parse( self.grammar.root, s_child )
-    for oToken in oRoot.children :
+    for oToken in oRoot.children() :
       self.addChild( oToken )
 
   def printit( self, n_indent = 0 ) :
@@ -121,7 +116,7 @@ class Token( object ) :
         o_context.out += '\n'
       if 'indent' in o_token.options :
         o_context.indent += 1
-      for oChild in o_token.children :
+      for oChild in o_token.children() :
         recursive( oChild, o_context )
 
     oContext = Context()
@@ -132,7 +127,7 @@ class Token( object ) :
     return oContext.out
 
 
-  def findChild( self, s_name, s_val = None, f_recursive = True ) :
+  def __descendants( self, s_name, s_val = None, f_recursive = True ) :
 
     lFound = []
 
@@ -140,17 +135,27 @@ class Token( object ) :
       if s_name == o_token.name and (not s_val or s_val == o_token.val) :
         l_found.append( o_token )
       if f_recursive :
-        for oToken in o_token.children :
+        for oToken in o_token.children() :
           recursive( oToken, l_found )
 
-    for oToken in self.children :
+    for oToken in self.children() :
       recursive( oToken, lFound )
     self.found = ListEx( lFound )
     return self.found
 
 
-  def findSibling( self, s_name, s_val = None ) :
+  def children( self, s_name = None, s_val = None ) :
+    if not s_name :
+      return ListEx( self.__lChildren )
+    return self.__descendants( s_name, s_val, f_recursive = False )
+
+
+  def descendants( self, s_name, s_val = None ) :
+    return self.__descendants( s_name, s_val, f_recursive = True )
+
+
+  def siblings( self, s_name, s_val = None ) :
     if self.parent :
-      return self.parent.findChild( s_name, s_val, f_recursive = False )
+      return self.parent.__descendants( s_name, s_val, f_recursive = False )
     return ListEx()
 
