@@ -77,6 +77,19 @@ class Token( object ) :
     return oToken
 
 
+  def addSiblingAfter( self, * args ) :
+    assert self.parent
+    oToken = self.__tokenFromArgs( * args )
+    oToken.parent = self.parent
+    for i, oChild in enumerate( self.parent.__lChildren ) :
+      if oChild == self :
+        self.parent.__lChildren.insert( i + 1, oToken )
+        break
+    else :
+      assert False, "internal consistency error"
+    return oToken
+
+
   def addSiblingBeforeFromStr( self, s_child ) :
     oRoot = parse.parse( self.grammar.root, s_child )
     for oToken in oRoot.children() :
@@ -200,6 +213,15 @@ class Token( object ) :
     if self.parent :
       return self.parent.__descendants( s_name, s_val, f_recursive = False )
     return ListEx()
+
+
+  def sibling( self, s_name, s_val = None ) :
+    lSiblings = self.siblings( s_name, s_val )
+    if lSiblings :
+      self.found = lSiblings[ 0 ]
+    else :
+      self.found = None
+    return self.found
 
 
   ##x Used by |addChild|, |addSibling| etc. Creates token from args that
