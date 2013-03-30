@@ -52,28 +52,7 @@ class Token( object ) :
 
 
   def addChild( self, * args ) :
-    assert args
-    uArg = args[ 0 ]
-    if isinstance( uArg, Token ) :
-      assert 1 == len( args )
-      oToken = uArg
-    else :
-      assert isinstance( uArg, basestring )
-      assert len( args ) in [ 1, 2 ]
-      sName = uArg
-      sVal = None
-      if 2 == len( args ) :
-        uArg = args[ 1 ]
-        assert isinstance( uArg, (basestring, int, long, float) )
-        if isinstance( uArg, basestring ) :
-          sVal = uArg
-        else :
-          sVal = str( uArg )
-      oToken = Token( sName, sVal )
-      oToken.grammar = self.grammar
-      ##! Get options from grammar definition, if any.
-      if sName in oToken.grammar.options :
-        oToken.options = oToken.grammar.options[ sName ]
+    oToken = self.__tokenFromArgs( * args )
     self.__lChildren.append( oToken )
     oToken.parent = self
     return oToken
@@ -184,4 +163,33 @@ class Token( object ) :
     if self.parent :
       return self.parent.__descendants( s_name, s_val, f_recursive = False )
     return ListEx()
+
+
+  ##x Used by |addChild|, |addSibling| etc. Creates token from args that
+  ##  can be token, one string for name, string and other value for name
+  ##  and val.
+  def __tokenFromArgs( self, * args ) :
+    assert args
+    uArg = args[ 0 ]
+    if isinstance( uArg, Token ) :
+      assert 1 == len( args )
+      return uArg
+    else :
+      assert isinstance( uArg, basestring )
+      assert len( args ) in [ 1, 2 ]
+      sName = uArg
+      sVal = None
+      if 2 == len( args ) :
+        uArg = args[ 1 ]
+        assert isinstance( uArg, (basestring, int, long, float) )
+        if isinstance( uArg, basestring ) :
+          sVal = uArg
+        else :
+          sVal = str( uArg )
+      oToken = Token( sName, sVal )
+      oToken.grammar = self.grammar
+      ##! Get options from grammar definition, if any.
+      if sName in oToken.grammar.options :
+        oToken.options = oToken.grammar.options[ sName ]
+      return oToken
 
