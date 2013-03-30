@@ -64,6 +64,25 @@ class Token( object ) :
       self.addChild( oToken )
 
 
+  def addSiblingBefore( self, * args ) :
+    assert self.parent
+    oToken = self.__tokenFromArgs( * args )
+    oToken.parent = self.parent
+    for i, oChild in enumerate( self.parent.__lChildren ) :
+      if oChild == self :
+        self.parent.__lChildren.insert( i, oToken )
+        break
+    else :
+      assert False, "internal consistency error"
+    return oToken
+
+
+  def addSiblingBeforeFromStr( self, s_child ) :
+    oRoot = parse.parse( self.grammar.root, s_child )
+    for oToken in oRoot.children() :
+      self.addSiblingBefore( oToken )
+
+
   def printit( self, n_indent = 0 ) :
     sIndent = ' ' * 2 * n_indent
     print( '{0}{1}({2})'.format( sIndent, self.name, self.val ) )
@@ -151,12 +170,20 @@ class Token( object ) :
     return self.__descendants( s_name, s_val, f_recursive = False )
 
 
+  def child( self, s_name = None, s_val = None ) :
+    return self.children( s_name, s_val ).first()
+
+
   def setChildren( self, l_children ) :
     self.__lChildren = l_children
 
 
   def descendants( self, s_name, s_val = None ) :
     return self.__descendants( s_name, s_val, f_recursive = True )
+
+
+  def descendant( self, s_name, s_val = None ) :
+    return self.descendants( s_name, s_val ).first()
 
 
   def siblings( self, s_name, s_val = None ) :
