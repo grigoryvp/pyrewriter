@@ -171,7 +171,12 @@ class Token( object ) :
 
 
   def child( self, s_name = None, s_val = None ) :
-    return self.children( s_name, s_val ).first()
+    lChildren = self.children( s_name, s_val )
+    if lChildren :
+      self.found = lChildren[ 0 ]
+    else :
+      self.found = None
+    return self.found
 
 
   def setChildren( self, l_children ) :
@@ -183,7 +188,12 @@ class Token( object ) :
 
 
   def descendant( self, s_name, s_val = None ) :
-    return self.descendants( s_name, s_val ).first()
+    lDescendants = self.descendants( s_name, s_val )
+    if lDescendants :
+      self.found = lDescendants[ 0 ]
+    else :
+      self.found = None
+    return self.found
 
 
   def siblings( self, s_name, s_val = None ) :

@@ -49,7 +49,10 @@ oToken = pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
   } # terminator
   # after block
 """ )
-oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_END' )
-oBlock.addSiblingBeforeFromStr( "foo = 1;" )
+if oToken.child( 'FOO' ) :
+  pass
+else :
+  oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_END' )
+  oBlock.addSiblingBeforeFromStr( "foo = 1;" )
 print( oToken.toStr() )
 
