@@ -150,6 +150,10 @@ class Token( object ) :
     return self.__descendants( s_name, s_val, f_recursive = False )
 
 
+  def setChildren( self, l_children ) :
+    self.__lChildren = l_children
+
+
   def descendants( self, s_name, s_val = None ) :
     return self.__descendants( s_name, s_val, f_recursive = True )
 
