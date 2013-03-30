@@ -43,5 +43,12 @@ for oItem in oToken.descendants( 'CMD', 'foo' ) :
   oVal = oBlock.descendants( 'CMD', 'baz' ).first().siblings( 'ARG' ).first()
   oVal.val = '3'
 
+oToken = pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
+  server {
+    name "foo";
+  } # terminator
+  # after block
+""" )
+print( repr( oToken ) )
 print( oToken.toStr() )
 

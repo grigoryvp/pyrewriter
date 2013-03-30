@@ -84,6 +84,7 @@ class Token( object ) :
     for oToken in oRoot.children() :
       self.addChild( oToken )
 
+
   def printit( self, n_indent = 0 ) :
     sIndent = ' ' * 2 * n_indent
     print( '{0}{1}({2})'.format( sIndent, self.name, self.val ) )
@@ -121,6 +122,27 @@ class Token( object ) :
 
     oContext = Context()
     oContext.lastToken = None
+    oContext.indent = 0
+    oContext.out = ""
+    recursive( self, oContext )
+    return oContext.out
+
+
+  def __repr__( self ) :
+
+    class Context( object ) : pass
+
+    def recursive( o_token, o_context ) :
+      if o_context.out :
+        o_context.out += '\n'
+      o_context.out += '  ' * o_context.indent
+      o_context.out += '{0}( {1} )'.format( o_token.name, o_token.val )
+      o_context.indent += 1
+      for oChild in o_token.children() :
+        recursive( oChild, o_context )
+      o_context.indent -= 1
+
+    oContext = Context()
     oContext.indent = 0
     oContext.out = ""
     recursive( self, oContext )
