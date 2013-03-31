@@ -7,22 +7,26 @@
 
 import grammar
 import token
+import predefined
 
 
 ##x Evaluates to root unnamed token that contains top-level tokens produced
-##  by applying grammar to text.
+##  by applying grammar to text. Grammar can be defined as
+##  |pyrewriter.Grammar| instance or as predefined grammar name.
 ##! Must be used instead of calling |grammar.parseString| since it also
 ##  adds reference to grammar into tokens that is required for some
 ##  mechanics to work.
-def parse( o_grammar, s_txt ) :
+def parse( u_grammar, s_txt ) :
 
+  if isinstance( u_grammar, basestring ) :
+    u_grammar = predefined.predefined( u_grammar )
   ##  Root token.
   oToken = token.Token()
   ##  Grammar definition.
-  oGrammar = grammar.Grammar( o_grammar )
+  oGrammar = grammar.Grammar( u_grammar )
   ##  Build expression-name-to-options dictionary.
   oGrammar.analyse()
-  for oSubtoken in o_grammar.parseString( s_txt ) :
+  for oSubtoken in u_grammar.parseString( s_txt ) :
     oToken.addChild( oSubtoken )
   def recursiveSetGrammar( o_token ) :
     o_token.grammar = oGrammar

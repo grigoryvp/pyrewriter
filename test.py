@@ -24,7 +24,7 @@ oSubToken = oToken.addChild( 'EXPR' )
 oSubToken.addChild( 'CMD', 'bar' )
 oSubToken.addChild( 'ARG', 42 )
 oSubToken.addChild( 'TERM', ';' )
-oToken.addChild( pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
+oToken.addChild( pyrewriter.parse( 'nginx', """
   foo {
     bar "#";
     baz 2;
@@ -43,7 +43,7 @@ for oItem in oToken.descendants( 'CMD', 'foo' ) :
   oVal = oBlock.descendants( 'CMD', 'baz' ).first().siblings( 'ARG' ).first()
   oVal.val = '3'
 
-oToken = pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
+oToken = pyrewriter.parse( 'nginx', """
   server {
     name "foo";
   } # terminator
@@ -57,10 +57,7 @@ else :
   oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_BEGIN' )
   oBlock.addSiblingAfter( s_raw = "foo2 2; foo3 3;" )
 
-oToken = pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
-  a 1;
-  b 2;
-""" )
+oToken = pyrewriter.parse( 'nginx', 'a 1; b 2;' )
 oToken.child( 'EXPR' ).replace( s_raw = 'foo 2;' )
 print( oToken.toStr() )
 
