@@ -52,9 +52,9 @@ class Token( object ) :
 
 
   def addChild( self, * args, ** kwargs ) :
-    oToken = self.__tokenFromArgs( * args, ** kwargs )
-    self.__lChildren.append( oToken )
-    oToken.parent = self
+    for oToken in self.__tokensFromArgs( * args, ** kwargs ) :
+      oToken.parent = self
+      self.__lChildren.append( oToken )
     return oToken
 
 
@@ -66,11 +66,12 @@ class Token( object ) :
 
   def addSiblingBefore( self, * args, ** kwargs ) :
     assert self.parent
-    oToken = self.__tokenFromArgs( * args, ** kwargs )
-    oToken.parent = self.parent
-    for i, oChild in enumerate( self.parent.__lChildren ) :
+    for nChild, oChild in enumerate( self.parent.__lChildren ) :
       if oChild == self :
-        self.parent.__lChildren.insert( i, oToken )
+        lTokens = self.__tokensFromArgs( * args, ** kwargs )
+        for nToken, oToken in enumerate( lTokens ) :
+          oToken.parent = self.parent
+          self.parent.__lChildren.insert( nChild + nToken, oToken )
         break
     else :
       assert False, "internal consistency error"
@@ -85,11 +86,12 @@ class Token( object ) :
 
   def addSiblingAfter( self, * args, ** kwargs ) :
     assert self.parent
-    oToken = self.__tokenFromArgs( * args, ** kwargs )
-    oToken.parent = self.parent
-    for i, oChild in enumerate( self.parent.__lChildren ) :
+    for nChild, oChild in enumerate( self.parent.__lChildren ) :
       if oChild == self :
-        self.parent.__lChildren.insert( i + 1, oToken )
+        lTokens = self.__tokensFromArgs( * args, ** kwargs )
+        for nToken, oToken in enumerate( lTokens ) :
+          oToken.parent = self.parent
+          self.parent.__lChildren.insert( nChild + nToken + 1, oToken )
         break
     else :
       assert False, "internal consistency error"
@@ -234,7 +236,7 @@ class Token( object ) :
   ##  can be token, one string for name, string and other value for name
   ##  and val, |s_raw| keywoard arg for raw text token representation that
   ##  need to be parsed.
-  def __tokenFromArgs( self, * args, ** kwargs ) :
+  def __tokensFromArgs( self, * args, ** kwargs ) :
     if 's_raw' in kwargs :
       oRoot = parse.parse( self.grammar.root, s_child )
       ##! Evaluates to virtual root token.
@@ -244,7 +246,7 @@ class Token( object ) :
       uArg = args[ 0 ]
       if isinstance( uArg, Token ) :
         assert 1 == len( args )
-        return uArg
+        return [ uArg ]
       else :
         assert isinstance( uArg, basestring )
         assert len( args ) in [ 1, 2 ]
@@ -262,5 +264,5 @@ class Token( object ) :
         ##! Get options from grammar definition, if any.
         if sName in oToken.grammar.options :
           oToken.options = oToken.grammar.options[ sName ]
-        return oToken
+        return [ oToken ]
 
