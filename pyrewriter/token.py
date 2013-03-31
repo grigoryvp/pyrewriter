@@ -51,8 +51,8 @@ class Token( object ) :
     return self.__sName
 
 
-  def addChild( self, * args ) :
-    oToken = self.__tokenFromArgs( * args )
+  def addChild( self, * args, ** kwargs ) :
+    oToken = self.__tokenFromArgs( * args, ** kwargs )
     self.__lChildren.append( oToken )
     oToken.parent = self
     return oToken
@@ -64,9 +64,9 @@ class Token( object ) :
       self.addChild( oToken )
 
 
-  def addSiblingBefore( self, * args ) :
+  def addSiblingBefore( self, * args, ** kwargs ) :
     assert self.parent
-    oToken = self.__tokenFromArgs( * args )
+    oToken = self.__tokenFromArgs( * args, ** kwargs )
     oToken.parent = self.parent
     for i, oChild in enumerate( self.parent.__lChildren ) :
       if oChild == self :
@@ -83,9 +83,9 @@ class Token( object ) :
       self.addSiblingBefore( oToken )
 
 
-  def addSiblingAfter( self, * args ) :
+  def addSiblingAfter( self, * args, ** kwargs ) :
     assert self.parent
-    oToken = self.__tokenFromArgs( * args )
+    oToken = self.__tokenFromArgs( * args, ** kwargs )
     oToken.parent = self.parent
     for i, oChild in enumerate( self.parent.__lChildren ) :
       if oChild == self :
@@ -232,8 +232,9 @@ class Token( object ) :
 
   ##x Used by |addChild|, |addSibling| etc. Creates token from args that
   ##  can be token, one string for name, string and other value for name
-  ##  and val.
-  def __tokenFromArgs( self, * args ) :
+  ##  and val, |s_raw| keywoard arg for raw text token representation that
+  ##  need to be parsed.
+  def __tokenFromArgs( self, * args, ** kwargs ) :
     assert args
     uArg = args[ 0 ]
     if isinstance( uArg, Token ) :
