@@ -53,6 +53,8 @@ if oToken.child( 'FOO' ) :
   pass
 else :
   oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_END' )
-  oBlock.addSiblingBefore( s_raw = "foo = 1;" )
+  oBlock.addSiblingBefore( s_raw = "foo 1;" )
+  oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_BEGIN' )
+  oBlock.addSiblingAfter( s_raw = "foo2 2; foo3 3;" )
 print( oToken.toStr() )
 
