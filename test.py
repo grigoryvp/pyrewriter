@@ -30,7 +30,7 @@ oToken.addChild( pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
     baz 2;
   }
 """ ).children().first() )
-oToken.addChildFromStr( """
+oToken.addChild( s_raw = """
   foo {
     bar "#";
     baz 2;
@@ -53,6 +53,6 @@ if oToken.child( 'FOO' ) :
   pass
 else :
   oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_END' )
-  oBlock.addSiblingBeforeFromStr( "foo = 1;" )
+  oBlock.addSiblingBefore( s_raw = "foo = 1;" )
 print( oToken.toStr() )
 

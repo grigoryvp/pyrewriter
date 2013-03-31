@@ -58,12 +58,6 @@ class Token( object ) :
     return oToken
 
 
-  def addChildFromStr( self, s_child ) :
-    oRoot = parse.parse( self.grammar.root, s_child )
-    for oToken in oRoot.children() :
-      self.addChild( oToken )
-
-
   def addSiblingBefore( self, * args, ** kwargs ) :
     assert self.parent
     for nChild, oChild in enumerate( self.parent.__lChildren ) :
@@ -78,12 +72,6 @@ class Token( object ) :
     return oToken
 
 
-  def addSiblingBeforeFromStr( self, s_child ) :
-    oRoot = parse.parse( self.grammar.root, s_child )
-    for oToken in oRoot.children() :
-      self.addSiblingBefore( oToken )
-
-
   def addSiblingAfter( self, * args, ** kwargs ) :
     assert self.parent
     for nChild, oChild in enumerate( self.parent.__lChildren ) :
@@ -96,12 +84,6 @@ class Token( object ) :
     else :
       assert False, "internal consistency error"
     return oToken
-
-
-  def addSiblingAfterFromStr( self, s_child ) :
-    oRoot = parse.parse( self.grammar.root, s_child )
-    for oToken in oRoot.children() :
-      self.addSiblingAfter( oToken )
 
 
   def printit( self, n_indent = 0 ) :
@@ -238,7 +220,7 @@ class Token( object ) :
   ##  need to be parsed.
   def __tokensFromArgs( self, * args, ** kwargs ) :
     if 's_raw' in kwargs :
-      oRoot = parse.parse( self.grammar.root, s_child )
+      oRoot = parse.parse( self.grammar.root, kwargs[ 's_raw' ] )
       ##! Evaluates to virtual root token.
       return oRoot.children()
     else :
