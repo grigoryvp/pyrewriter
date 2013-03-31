@@ -235,27 +235,32 @@ class Token( object ) :
   ##  and val, |s_raw| keywoard arg for raw text token representation that
   ##  need to be parsed.
   def __tokenFromArgs( self, * args, ** kwargs ) :
-    assert args
-    uArg = args[ 0 ]
-    if isinstance( uArg, Token ) :
-      assert 1 == len( args )
-      return uArg
+    if 's_raw' in kwargs :
+      oRoot = parse.parse( self.grammar.root, s_child )
+      ##! Evaluates to virtual root token.
+      return oRoot.children()
     else :
-      assert isinstance( uArg, basestring )
-      assert len( args ) in [ 1, 2 ]
-      sName = uArg
-      sVal = None
-      if 2 == len( args ) :
-        uArg = args[ 1 ]
-        assert isinstance( uArg, (basestring, int, long, float) )
-        if isinstance( uArg, basestring ) :
-          sVal = uArg
-        else :
-          sVal = str( uArg )
-      oToken = Token( sName, sVal )
-      oToken.grammar = self.grammar
-      ##! Get options from grammar definition, if any.
-      if sName in oToken.grammar.options :
-        oToken.options = oToken.grammar.options[ sName ]
-      return oToken
+      assert args
+      uArg = args[ 0 ]
+      if isinstance( uArg, Token ) :
+        assert 1 == len( args )
+        return uArg
+      else :
+        assert isinstance( uArg, basestring )
+        assert len( args ) in [ 1, 2 ]
+        sName = uArg
+        sVal = None
+        if 2 == len( args ) :
+          uArg = args[ 1 ]
+          assert isinstance( uArg, (basestring, int, long, float) )
+          if isinstance( uArg, basestring ) :
+            sVal = uArg
+          else :
+            sVal = str( uArg )
+        oToken = Token( sName, sVal )
+        oToken.grammar = self.grammar
+        ##! Get options from grammar definition, if any.
+        if sName in oToken.grammar.options :
+          oToken.options = oToken.grammar.options[ sName ]
+        return oToken
 
