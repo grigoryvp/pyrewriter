@@ -108,7 +108,7 @@ class Token( object ) :
   def sibling( self, s_name, s_val = None ) :
     lSiblings = self.siblings( s_name, s_val )
     if lSiblings :
-      self.found = lSiblings[ 0 ]
+      self.found = lSiblings.first()
     else :
       self.found = None
     return self.found
@@ -123,7 +123,7 @@ class Token( object ) :
   def child( self, s_name = None, s_val = None ) :
     lChildren = self.children( s_name, s_val )
     if lChildren :
-      self.found = lChildren[ 0 ]
+      self.found = lChildren.first()
     else :
       self.found = None
     return self.found
@@ -138,7 +138,7 @@ class Token( object ) :
   def descendant( self, s_name, s_val = None ) :
     lDescendants = self.descendants( s_name, s_val )
     if lDescendants :
-      self.found = lDescendants[ 0 ]
+      self.found = lDescendants.first()
     else :
       self.found = None
     return self.found
@@ -201,6 +201,16 @@ class Token( object ) :
     assert oContext.capture, "capture not found in query"
     self.found = oContext.found
     return self.found
+
+
+  def searchOne( self, s_query ) :
+    lResult = self.search( s_query )
+    if lResult :
+      self.found = lResult.first()
+    else :
+      self.found = None
+    return self.found
+
 
   ##@ Output API.
 

@@ -63,7 +63,7 @@ oToken.child( 'EXPR' ).replace( s_raw = 'foo 2;' )
 oToken = pyrewriter.parse( 'nginx', '''
   foo;
 ''' )
-assert oToken.search( "/(EXPR)/CMD=foo" ).first().name == 'EXPR'
+assert oToken.searchOne( "/(EXPR)/CMD=foo" ).name == 'EXPR'
 assert oToken.search( "/EXPR/(CMD=foo)" ).first().val == 'foo'
 
 oToken = pyrewriter.parse( 'nginx', '''
