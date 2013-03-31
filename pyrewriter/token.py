@@ -51,11 +51,7 @@ class Token( object ) :
     return self.__sName
 
 
-  def addChild( self, * args, ** kwargs ) :
-    for oToken in self.__tokensFromArgs( * args, ** kwargs ) :
-      oToken.parent = self
-      self.__lChildren.append( oToken )
-    return oToken
+  ##@ Modification API.
 
 
   def addSiblingBefore( self, * args, ** kwargs ) :
@@ -84,6 +80,66 @@ class Token( object ) :
     else :
       assert False, "internal consistency error"
     return oToken
+
+
+  def addChild( self, * args, ** kwargs ) :
+    for oToken in self.__tokensFromArgs( * args, ** kwargs ) :
+      oToken.parent = self
+      self.__lChildren.append( oToken )
+    return oToken
+
+
+  def setChildren( self, l_children ) :
+    self.__lChildren = l_children
+
+
+  ##@ Search API.
+
+
+  def sibling( self, s_name, s_val = None ) :
+    lSiblings = self.siblings( s_name, s_val )
+    if lSiblings :
+      self.found = lSiblings[ 0 ]
+    else :
+      self.found = None
+    return self.found
+
+
+  def siblings( self, s_name, s_val = None ) :
+    if self.parent :
+      return self.parent.__descendants( s_name, s_val, f_recursive = False )
+    return ListEx()
+
+
+  def child( self, s_name = None, s_val = None ) :
+    lChildren = self.children( s_name, s_val )
+    if lChildren :
+      self.found = lChildren[ 0 ]
+    else :
+      self.found = None
+    return self.found
+
+
+  def children( self, s_name = None, s_val = None ) :
+    if not s_name :
+      return ListEx( self.__lChildren )
+    return self.__descendants( s_name, s_val, f_recursive = False )
+
+
+  def descendant( self, s_name, s_val = None ) :
+    lDescendants = self.descendants( s_name, s_val )
+    if lDescendants :
+      self.found = lDescendants[ 0 ]
+    else :
+      self.found = None
+    return self.found
+
+
+  def descendants( self, s_name, s_val = None ) :
+    return self.__descendants( s_name, s_val, f_recursive = True )
+
+
+  ##@ Output API.
 
 
   def printit( self, n_indent = 0 ) :
@@ -150,68 +206,7 @@ class Token( object ) :
     return oContext.out
 
 
-  def __descendants( self, s_name, s_val = None, f_recursive = True ) :
-
-    lFound = []
-
-    def recursive( o_token, l_found ) :
-      if s_name == o_token.name and (not s_val or s_val == o_token.val) :
-        l_found.append( o_token )
-      if f_recursive :
-        for oToken in o_token.children() :
-          recursive( oToken, l_found )
-
-    for oToken in self.children() :
-      recursive( oToken, lFound )
-    self.found = ListEx( lFound )
-    return self.found
-
-
-  def children( self, s_name = None, s_val = None ) :
-    if not s_name :
-      return ListEx( self.__lChildren )
-    return self.__descendants( s_name, s_val, f_recursive = False )
-
-
-  def child( self, s_name = None, s_val = None ) :
-    lChildren = self.children( s_name, s_val )
-    if lChildren :
-      self.found = lChildren[ 0 ]
-    else :
-      self.found = None
-    return self.found
-
-
-  def setChildren( self, l_children ) :
-    self.__lChildren = l_children
-
-
-  def descendants( self, s_name, s_val = None ) :
-    return self.__descendants( s_name, s_val, f_recursive = True )
-
-
-  def descendant( self, s_name, s_val = None ) :
-    lDescendants = self.descendants( s_name, s_val )
-    if lDescendants :
-      self.found = lDescendants[ 0 ]
-    else :
-      self.found = None
-    return self.found
-
-
-  def siblings( self, s_name, s_val = None ) :
-    if self.parent :
-      return self.parent.__descendants( s_name, s_val, f_recursive = False )
-    return ListEx()
-
-
-  def sibling( self, s_name, s_val = None ) :
-    lSiblings = self.siblings( s_name, s_val )
-    if lSiblings :
-      self.found = lSiblings[ 0 ]
-    else :
-      self.found = None
-    return self.found
+  ##@ Implementation.
 
 
   ##x Used by |addChild|, |addSibling| etc. Creates token from args that
@@ -247,4 +242,21 @@ class Token( object ) :
         if sName in oToken.grammar.options :
           oToken.options = oToken.grammar.options[ sName ]
         return [ oToken ]
+
+
+  def __descendants( self, s_name, s_val = None, f_recursive = True ) :
+
+    lFound = []
+
+    def recursive( o_token, l_found ) :
+      if s_name == o_token.name and (not s_val or s_val == o_token.val) :
+        l_found.append( o_token )
+      if f_recursive :
+        for oToken in o_token.children() :
+          recursive( oToken, l_found )
+
+    for oToken in self.children() :
+      recursive( oToken, lFound )
+    self.found = ListEx( lFound )
+    return self.found
 
