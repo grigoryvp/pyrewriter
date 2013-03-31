@@ -59,5 +59,19 @@ else :
 
 oToken = pyrewriter.parse( 'nginx', 'a 1; b 2;' )
 oToken.child( 'EXPR' ).replace( s_raw = 'foo 2;' )
-print( oToken.toStr() )
+
+oToken = pyrewriter.parse( 'nginx', '''
+  foo;
+''' )
+assert oToken.search( "/(EXPR)/CMD=foo" ).first().name == 'EXPR'
+assert oToken.search( "/EXPR/(CMD=foo)" ).first().val == 'foo'
+
+oToken = pyrewriter.parse( 'nginx', '''
+  foo / {
+    bar 2;
+    baz 3;
+  }
+''' )
+assert oToken.search( "/EXPR/CMD,(ARG)" ).first().val == '/'
+assert oToken.search( "/EXPR/CMD=foo,BLOCK/EXPR/(ARG)" ).last().val == '3'
 

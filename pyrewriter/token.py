@@ -149,32 +149,58 @@ class Token( object ) :
 
 
   ##x XPath-like search.
-  def search( s_query ) :
-    ##  Current search direction, '/' for child, ',' for sibling.
-    sDirection = None
-    for sRule in self.__splitex( s_query, '/,' ) :
-      if sRule in '/,' :
-        sDirection = sRule
+  def search( self, s_query ) :
+
+    class Context( object ) : pass
+    oContext = Context()
+    oContext.found = ListEx()
+    oContext.capture = False
+
+    def recursive( o_token, s_dir, l_rules, o_context ) :
+      if not l_rules :
+        ##  Some path in tokens tree matches entire query.
+        return True
+      if l_rules[ 0 ] in '/,' :
+        return recursive( o_token, l_rules[ 0 ], l_rules[ 1 : ], o_context )
       else :
+        sRule = l_rules[ 0 ]
         if not sRule :
-          raise "direction is not followed by condition"
-        if not sDirection :
-          raise "condition is not preceded by direction"
+          raise Exception( "direction is not followed by condition" )
+        if not s_dir :
+          raise Exception( "condition is not preceded by direction" )
+
+        ##  Current token must be captured?
         if sRule.startswith( '(' ) and sRule.endswith( ')' ) :
           sRule = sRule[ 1 : -1 ]
           fCapture = True
+          ##  To check later that query contains at last one capture.
+          o_context.capture = True
         else :
           fCapture = False
-        sName, _, sVal = sRule.partition( '=' )
-        if '/' == sDirection :
-          for oToken in self.children( sName, sVal ) :
-            pass
-            # recursive( oToken )
-        if ',' == sDirection :
-          for oToken in self.siblings( sName, sVal ) :
-            pass
-            # recursive( oToken )
 
+        ##  Perform search according to current direction.
+        sName, _, sVal = sRule.partition( '=' )
+        if '/' == s_dir :
+          lTokens = o_token.children( sName, sVal )
+        if ',' == s_dir :
+          lTokens = o_token.siblings( sName, sVal )
+
+        ##* If |True|, at last one recursive search was successfull.
+        fPositiveBranch = False
+        ##  Recursively check search results to find paths in tree that
+        ##  matches entire query.
+        for oToken in lTokens :
+          ##  Some path match entire query?
+          if recursive( oToken, None, l_rules[ 1 : ], o_context ) :
+            fPositiveBranch = True
+            if fCapture :
+              o_context.found.append( oToken )
+        return fPositiveBranch
+
+    recursive( self, None, self.__splitex( s_query, '/,' ), oContext )
+    assert oContext.capture, "capture not found in query"
+    self.found = oContext.found
+    return self.found
 
   ##@ Output API.
 
@@ -317,14 +343,18 @@ class Token( object ) :
 
   ##x Splits specified text using delimiter characters from specified
   ##  delimiters string. Evaluates to list of parts and delimiters.
-  def __splitex( s_txt, s_delimiters ) :
+  def __splitex( self, s_txt, s_delimiters ) :
     sAccum = ""
     lResult = []
     for s in s_txt :
       if s in s_delimiters :
-        lResult.append( sAccum )
-        sAccum = ""
+        if sAccum :
+          lResult.append( sAccum )
+          sAccum = ""
+        lResult.append( s )
       else :
         sAccum += s
+    if sAccum :
+      lResult.append( sAccum )
     return lResult
 
