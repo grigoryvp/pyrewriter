@@ -54,14 +54,32 @@ class Token( object ) :
   ##@ Modification API.
 
 
+  ##x Add specified token as sibling before this token.
+  ##  Token can be specified following ways:
+  ##  * As |Token| object.
+  ##  * As |Token.name| string.
+  ##  * As |Token.name| and |Token.val| strings.
+  ##  * As |s_raw| string that will be parsed via token grammar.
   def addSiblingBefore( self, * args, ** kwargs ) :
     return self.__addSibling( f_after = False, * args, ** kwargs )
 
 
+  ##x Add specified token as sibling after this token.
+  ##  Token can be specified following ways:
+  ##  * As |Token| object.
+  ##  * As |Token.name| string.
+  ##  * As |Token.name| and |Token.val| strings.
+  ##  * As |s_raw| string that will be parsed via token grammar.
   def addSiblingAfter( self, * args, ** kwargs ) :
     return self.__addSibling( f_after = True, * args, ** kwargs )
 
 
+  ##x Add specified token as direct child of this token.
+  ##  Token can be specified following ways:
+  ##  * As |Token| object.
+  ##  * As |Token.name| string.
+  ##  * As |Token.name| and |Token.val| strings.
+  ##  * As |s_raw| string that will be parsed via token grammar.
   def addChild( self, * args, ** kwargs ) :
     for oToken in self.__tokensFromArgs( * args, ** kwargs ) :
       oToken.parent = self
