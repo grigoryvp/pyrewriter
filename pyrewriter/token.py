@@ -55,31 +55,11 @@ class Token( object ) :
 
 
   def addSiblingBefore( self, * args, ** kwargs ) :
-    assert self.parent
-    for nChild, oChild in enumerate( self.parent.__lChildren ) :
-      if oChild == self :
-        lTokens = self.__tokensFromArgs( * args, ** kwargs )
-        for nToken, oToken in enumerate( lTokens ) :
-          oToken.parent = self.parent
-          self.parent.__lChildren.insert( nChild + nToken, oToken )
-        break
-    else :
-      assert False, "internal consistency error"
-    return oToken
+    return self.__addSibling( f_after = False, * args, ** kwargs )
 
 
   def addSiblingAfter( self, * args, ** kwargs ) :
-    assert self.parent
-    for nChild, oChild in enumerate( self.parent.__lChildren ) :
-      if oChild == self :
-        lTokens = self.__tokensFromArgs( * args, ** kwargs )
-        for nToken, oToken in enumerate( lTokens ) :
-          oToken.parent = self.parent
-          self.parent.__lChildren.insert( nChild + nToken + 1, oToken )
-        break
-    else :
-      assert False, "internal consistency error"
-    return oToken
+    return self.__addSibling( f_after = True, * args, ** kwargs )
 
 
   def addChild( self, * args, ** kwargs ) :
@@ -259,4 +239,21 @@ class Token( object ) :
       recursive( oToken, lFound )
     self.found = ListEx( lFound )
     return self.found
+
+
+  def __addSibling( self, f_after, * args, ** kwargs ) :
+    assert self.parent
+    for nChild, oChild in enumerate( self.parent.__lChildren ) :
+      if oChild == self :
+        lTokens = self.__tokensFromArgs( * args, ** kwargs )
+        for nToken, oToken in enumerate( lTokens ) :
+          oToken.parent = self.parent
+          nInsertPos = nChild + nToken
+          if f_after :
+            nInsertPos += 1
+          self.parent.__lChildren.insert( nInsertPos, oToken )
+        break
+    else :
+      assert False, "internal consistency error"
+    return oToken
 
