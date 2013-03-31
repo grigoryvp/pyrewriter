@@ -148,6 +148,34 @@ class Token( object ) :
     return self.__descendants( s_name, s_val, f_recursive = True )
 
 
+  ##x XPath-like search.
+  def search( s_query ) :
+    ##  Current search direction, '/' for child, ',' for sibling.
+    sDirection = None
+    for sRule in self.__splitex( s_query, '/,' ) :
+      if sRule in '/,' :
+        sDirection = sRule
+      else :
+        if not sRule :
+          raise "direction is not followed by condition"
+        if not sDirection :
+          raise "condition is not preceded by direction"
+        if sRule.startswith( '(' ) and sRule.endswith( ')' ) :
+          sRule = sRule[ 1 : -1 ]
+          fCapture = True
+        else :
+          fCapture = False
+        sName, _, sVal = sRule.partition( '=' )
+        if '/' == sDirection :
+          for oToken in self.children( sName, sVal ) :
+            pass
+            # recursive( oToken )
+        if ',' == sDirection :
+          for oToken in self.siblings( sName, sVal ) :
+            pass
+            # recursive( oToken )
+
+
   ##@ Output API.
 
 
@@ -285,4 +313,18 @@ class Token( object ) :
     else :
       assert False, "internal consistency error"
     return oToken
+
+
+  ##x Splits specified text using delimiter characters from specified
+  ##  delimiters string. Evaluates to list of parts and delimiters.
+  def __splitex( s_txt, s_delimiters ) :
+    sAccum = ""
+    lResult = []
+    for s in s_txt :
+      if s in s_delimiters :
+        lResult.append( sAccum )
+        sAccum = ""
+      else :
+        sAccum += s
+    return lResult
 
