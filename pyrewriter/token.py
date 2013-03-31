@@ -77,6 +77,12 @@ class Token( object ) :
     return oToken
 
 
+  def addSiblingBeforeFromStr( self, s_child ) :
+    oRoot = parse.parse( self.grammar.root, s_child )
+    for oToken in oRoot.children() :
+      self.addSiblingBefore( oToken )
+
+
   def addSiblingAfter( self, * args ) :
     assert self.parent
     oToken = self.__tokenFromArgs( * args )
@@ -90,10 +96,10 @@ class Token( object ) :
     return oToken
 
 
-  def addSiblingBeforeFromStr( self, s_child ) :
+  def addSiblingAfterFromStr( self, s_child ) :
     oRoot = parse.parse( self.grammar.root, s_child )
     for oToken in oRoot.children() :
-      self.addSiblingBefore( oToken )
+      self.addSiblingAfter( oToken )
 
 
   def printit( self, n_indent = 0 ) :
