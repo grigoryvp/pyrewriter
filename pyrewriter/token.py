@@ -87,8 +87,19 @@ class Token( object ) :
     return oToken
 
 
-  def setChildren( self, l_children ) :
-    self.__lChildren = l_children
+  ##x Replace this token with specified token.
+  ##  Token can be specified following ways:
+  ##  * As |Token| object.
+  ##  * As |Token.name| string.
+  ##  * As |Token.name| and |Token.val| strings.
+  ##  * As |s_raw| string that will be parsed via token grammar.
+  ##! If token is specified as raw string and parsing evaluates to more
+  ##  that one token, all of them will be added.
+  def replace( self, * args, ** kwargs ) :
+    assert self.parent
+    oReplaced = self.addSiblingAfter( * args, ** kwargs )
+    self.parent.__lChildren.remove( self )
+    return oReplaced
 
 
   ##@ Search API.
