@@ -8,6 +8,7 @@
 import info
 import parse
 import predefined
+import re
 
 
 class ListEx( list ) :
@@ -153,10 +154,12 @@ class Token( object ) :
   ##x XPath-like search.
   def search( self, s_query ) :
 
+    sRe = '[^\(]*\([^\)]+\)[^\)]*'
+    assert re.match( sRe, s_query ), "capture not found in query"
+
     class Context( object ) : pass
     oContext = Context()
     oContext.found = ListEx()
-    oContext.capture = False
 
     def recursive( o_token, s_dir, l_rules, o_context ) :
       if not l_rules :
@@ -175,8 +178,6 @@ class Token( object ) :
         if sRule.startswith( '(' ) and sRule.endswith( ')' ) :
           sRule = sRule[ 1 : -1 ]
           fCapture = True
-          ##  To check later that query contains at last one capture.
-          o_context.capture = True
         else :
           fCapture = False
 
@@ -200,7 +201,6 @@ class Token( object ) :
         return fPositiveBranch
 
     recursive( self, None, self.__splitex( s_query, '/,' ), oContext )
-    assert oContext.capture, "capture not found in query"
     self.found = oContext.found
     return self.found
 
