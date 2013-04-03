@@ -243,7 +243,7 @@ class Token( object ) :
         ##  First token in the line?
         else :
           o_context.out += o_context.indent * s_indent
-        o_context.out += o_token.val
+        o_context.out += str( o_token.val )
         oContext.lastToken = o_token
       if 'newline' in o_token.options :
         o_context.out += '\n'
