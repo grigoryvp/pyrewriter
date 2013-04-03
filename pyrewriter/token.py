@@ -61,7 +61,8 @@ class Token( object ) :
   ##  * As |Token.name| and |Token.val| strings.
   ##  * As |s_raw| string that will be parsed via token grammar.
   def addSiblingBefore( self, * args, ** kwargs ) :
-    return self.__addSibling( f_after = False, * args, ** kwargs )
+    kwargs[ 'f_after' ] = False
+    return self.__addSibling( * args, ** kwargs )
 
 
   ##x Add specified token as sibling after this token.
@@ -71,7 +72,8 @@ class Token( object ) :
   ##  * As |Token.name| and |Token.val| strings.
   ##  * As |s_raw| string that will be parsed via token grammar.
   def addSiblingAfter( self, * args, ** kwargs ) :
-    return self.__addSibling( f_after = True, * args, ** kwargs )
+    kwargs[ 'f_after' ] = True
+    return self.__addSibling( * args, ** kwargs )
 
 
   ##x Add specified token as direct child of this token.
@@ -334,7 +336,7 @@ class Token( object ) :
     return self.found
 
 
-  def __addSibling( self, f_after, * args, ** kwargs ) :
+  def __addSibling( self, * args, ** kwargs ) :
     assert self.parent
     for nChild, oChild in enumerate( self.parent.__lChildren ) :
       if oChild == self :
@@ -342,7 +344,7 @@ class Token( object ) :
         for nToken, oToken in enumerate( lTokens ) :
           oToken.parent = self.parent
           nInsertPos = nChild + nToken
-          if f_after :
+          if kwargs.get( 'f_after' ) :
             nInsertPos += 1
           self.parent.__lChildren.insert( nInsertPos, oToken )
         break
