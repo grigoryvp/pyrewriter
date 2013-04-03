@@ -75,3 +75,11 @@ oToken = pyrewriter.parse( 'nginx', '''
 assert oToken.search( "/EXPR/CMD,(ARG)" ).first().val == '/'
 assert oToken.search( "/EXPR/CMD=foo,BLOCK/EXPR/(ARG)" ).last().val == '3'
 
+oToken = pyrewriter.parse( 'nginx', '''
+  http {
+    server_names_hash_bucket_size true;
+  }
+''' )
+sQuery = '/EXPR/CMD=http/BLOCK/EXPR/(CMD=server_names_hash_bucket_size)'
+oToken.search( sQuery )
+
