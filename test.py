@@ -7,6 +7,23 @@
 
 import pyrewriter
 
+
+oToken = pyrewriter.parse( 'nginx', '''
+  http {
+    server {
+      location / {
+        uwsgi_pass unix:/tmp/www_test.sock;
+      }
+    }
+  }
+''' )
+sQuery =  '/EXPR/CMD=http,BLOCK/(EXPR)/CMD=server,BLOCK'
+sQuery += '/EXPR/CMD=location,BLOCK/EXPR/CMD=uwsgi_pass'
+sQuery += ',ARG=unix:/tmp/www_test.sock'
+print( oToken.searchOne( sQuery ) )
+
+exit()
+
 oToken = pyrewriter.parse( pyrewriter.predefined( 'nginx' ), """
         server
 
