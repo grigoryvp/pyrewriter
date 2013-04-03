@@ -80,6 +80,6 @@ oToken = pyrewriter.parse( 'nginx', '''
     server_names_hash_bucket_size true;
   }
 ''' )
-sQuery = '/EXPR/CMD=http/BLOCK/EXPR/(CMD=server_names_hash_bucket_size)'
-oToken.search( sQuery )
+sQuery = '/EXPR/CMD=http,BLOCK/EXPR/(CMD=server_names_hash_bucket_size)'
+assert oToken.searchOne( sQuery ).val == 'server_names_hash_bucket_size'
 
