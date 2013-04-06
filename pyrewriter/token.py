@@ -169,7 +169,7 @@ class Token( object ) :
   ##x XPath-like search.
   def search( self, s_query ) :
 
-    sRe = '[^\(]*\([^\)]+\)[^\)]*'
+    sRe = r'[^\(]*\([^\)]+\)[^\)]*'
     assert re.match( sRe, s_query ), "capture not found in query"
 
     class Context( object ) : pass
@@ -198,11 +198,12 @@ class Token( object ) :
 
         ##  Perform search according to current direction.
         sName, _, sVal = sRule.partition( '=' )
+        if re.match( r'(\'|\")[^\'\"]*(\'|\")', sVal ) :
+          sVal = sVal[ 1 : -1 ]
         if '/' == s_dir :
           lTokens = o_token.children( sName, sVal )
         if ',' == s_dir :
           lTokens = o_token.siblings( sName, sVal )
-          print( sName, sVal, lTokens )
 
         ##* If |True|, at last one recursive search was successfull.
         fPositiveBranch = False
