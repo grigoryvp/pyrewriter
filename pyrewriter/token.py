@@ -51,6 +51,21 @@ class Token( object ) :
   def name( self ) :
     return self.__sName
 
+  @classmethod
+  def selftest( self ) :
+    oToken = Token()
+    assert oToken.__quotedStrClosed( "" )
+    assert oToken.__quotedStrClosed( "a" )
+    assert oToken.__quotedStrClosed( '""' )
+    assert oToken.__quotedStrClosed( "''" )
+    assert oToken.__quotedStrClosed( "''\"\"" )
+    assert not oToken.__quotedStrClosed( "'" )
+    assert not oToken.__quotedStrClosed( '"' )
+    assert not oToken.__quotedStrClosed( "'\"" )
+    assert not oToken.__quotedStrClosed( "\"'" )
+    assert not oToken.__quotedStrClosed( "''\"" )
+    assert not oToken.__quotedStrClosed( "\"\"'" )
+
 
   ##@ Modification API.
 
@@ -187,6 +202,7 @@ class Token( object ) :
           lTokens = o_token.children( sName, sVal )
         if ',' == s_dir :
           lTokens = o_token.siblings( sName, sVal )
+          print( sName, sVal, lTokens )
 
         ##* If |True|, at last one recursive search was successfull.
         fPositiveBranch = False
@@ -200,7 +216,7 @@ class Token( object ) :
               o_context.found.append( oToken )
         return fPositiveBranch
 
-    recursive( self, None, self.__splitex( s_query, '/,' ), oContext )
+    recursive( self, None, self.__splitSearchQuery( s_query ), oContext )
     self.found = oContext.found
     return self.found
 
@@ -353,13 +369,33 @@ class Token( object ) :
     return oToken
 
 
-  ##x Splits specified text using delimiter characters from specified
-  ##  delimiters string. Evaluates to list of parts and delimiters.
-  def __splitex( self, s_txt, s_delimiters ) :
+  ##x Evaluates to |True| if all single or double quoted strings in
+  ##  specified text are closed (or no strings at all).
+  def __quotedStrClosed( self, s_txt ) :
+    sOpenQuote = None
+    for i in range( len( s_txt ) ) :
+      s = s_txt[ i ]
+      if s in [ "'", '"' ] :
+        ##  This quote starts quoted string?
+        if not sOpenQuote :
+          sOpenQuote = s
+        else :
+          ##  This is not verbatim quote?
+          if i > 0 and '\\' != s_txt[ i - 1 ] :
+            ##  This is same quote that opens string?
+            if sOpenQuote == s :
+              sOpenQuote = None
+    return sOpenQuote is None
+
+
+  ##x Splits specified text using '/' and ',' delimiter characters while
+  ##  allowing them in single or double quoted strings, Evaluates to list of
+  ##  parts and delimiters.
+  def __splitSearchQuery( self, s_txt ) :
     sAccum = ""
     lResult = []
     for s in s_txt :
-      if s in s_delimiters :
+      if s in '/,' and self.__quotedStrClosed( sAccum ) :
         if sAccum :
           lResult.append( sAccum )
           sAccum = ""
@@ -369,4 +405,7 @@ class Token( object ) :
     if sAccum :
       lResult.append( sAccum )
     return lResult
+
+if __name__ == '__main__' :
+  Token.selftest()
 

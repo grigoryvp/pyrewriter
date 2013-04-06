@@ -17,6 +17,9 @@ oToken = pyrewriter.parse( 'nginx', '''
     }
   }
 ''' )
+# sQuery =  '/EXPR/CMD=http,BLOCK/(EXPR)/CMD=server,BLOCK'
+# sQuery += '/EXPR/CMD=location,BLOCK/EXPR/CMD=uwsgi_pass'
+# sQuery += ',ARG=unix:/tmp/www_test.sock'
 sQuery =  '/EXPR/CMD=http,BLOCK/(EXPR)/CMD=server,BLOCK'
 sQuery += '/EXPR/CMD=location,BLOCK/EXPR/CMD=uwsgi_pass'
 sQuery += ',ARG=unix:/tmp/www_test.sock'
