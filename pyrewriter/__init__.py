@@ -28,35 +28,35 @@ ABOUT_OPTIONS = [
 ]
 
 
-def capture( o_expr, * args ) :
+def capture( o_expr, * args ):
 
   mLocals = inspect.currentframe().f_back.f_locals
-  for sId in mLocals :
-    if id( mLocals[ sId ] ) == id( o_expr ) :
+  for sId in mLocals:
+    if id( mLocals[ sId ] ) == id( o_expr ):
       sName = sId
       break
-  else :
+  else:
     assert False, "Object without identifier passed to Capture()"
 
   mOptions = {}
-  for sOption in args :
+  for sOption in args:
     assert sOption in ABOUT_OPTIONS
     mOptions[ sOption ] = True
 
-  def parseAction( s_txt, n_pos, o_token ) :
+  def parseAction( s_txt, n_pos, o_token ):
     oToken = Token( sName )
-    for oChild in [ o for o in o_token if isinstance( o, Token ) ] :
+    for oChild in [ o for o in o_token if isinstance( o, Token ) ]:
       oToken.addChild( oChild )
     lTxt = [ o for o in o_token if isinstance( o, basestring ) ]
     assert len( lTxt ) < 2
-    if lTxt :
+    if lTxt:
       oToken.val = lTxt[ 0 ]
       oToken.options.update( mOptions )
     return oToken
   o_expr.addParseAction( parseAction )
 
-  if not hasattr( o_expr, info.CTX_NAME ) :
-    setattr( o_expr, info.CTX_NAME, { 'name' : sName, 'options': mOptions } )
-  else :
+  if not hasattr( o_expr, info.CTX_NAME ):
+    setattr( o_expr, info.CTX_NAME, { 'name': sName, 'options': mOptions } )
+  else:
     assert False, "Single object captured more than once"
 

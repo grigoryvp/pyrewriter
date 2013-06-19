@@ -53,7 +53,7 @@ oToken.addChild( s_raw = """
 """ )
 
 ##  Simple modification.
-for oItem in oToken.descendants( 'CMD', 'foo' ) :
+for oItem in oToken.descendants( 'CMD', 'foo' ):
   oBlock = oItem.siblings( 'BLOCK' ).first()
   oVal = oBlock.descendants( 'CMD', 'baz' ).first().siblings( 'ARG' ).first()
   oVal.val = '3'
@@ -64,9 +64,9 @@ oToken = pyrewriter.parse( 'nginx', """
   } # terminator
   # after block
 """ )
-if oToken.child( 'FOO' ) :
+if oToken.child( 'FOO' ):
   pass
-else :
+else:
   oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_END' )
   oBlock.addSiblingBefore( s_raw = "foo 1;" )
   oBlock = oToken.child( 'EXPR' ).child( 'BLOCK' ).child( 'BLOCK_BEGIN' )

@@ -9,25 +9,25 @@ import imp
 import os
 
 
-class Context( object ) :
+class Context( object ):
 
 
-  __oInst = None
+  _inst_o = None
 
 
-  def __init__( self ) :
+  def __init__( self ):
     self.predefined = {}
 
 
   @classmethod
-  def get( self ) :
-    if not self.__oInst :
-      self.__oInst = Context()
-    return self.__oInst
+  def get( self ):
+    if not self._inst_o:
+      self._inst_o = Context()
+    return self._inst_o
 
 
-def predefined( s_name ) :
-  if s_name not in Context.get().predefined :
+def predefined( s_name ):
+  if s_name not in Context.get().predefined:
     sModule = 'predefined_{0}'.format( s_name )
     sFile = '{0}.py'.format( sModule )
     sDir = os.path.dirname( os.path.abspath( __file__ ) )
