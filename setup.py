@@ -43,8 +43,8 @@ setuptools.setup(
   zip_safe     = True,
   install_requires = [
     ##  This library extends |pyparsing|.
-    ##! |1.5.7| is latest version that supports Python 2.x
-    'pyparsing == 1.5.7',
+    ##! |1.5.6| is latest version that supports Python 2.x
+    'pyparsing == 1.5.6',
   ],
   ##  http://pypi.python.org/pypi?:action=list_classifiers
   classifiers  = [
